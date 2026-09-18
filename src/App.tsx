@@ -6,6 +6,9 @@ import { supabase } from './utils/supabase';
 
 // Landing
 import { Welcome } from './pages/Welcome';
+import { Services } from './pages/Services';
+import { Pricing } from './pages/Pricing';
+import { About } from './pages/About';
 
 // Auth Pages
 import { Login } from './pages/auth/Login';
@@ -28,9 +31,11 @@ import { ManagerOverview } from './pages/manager/Overview';
 import { BookingRequests } from './pages/manager/BookingRequests';
 import { ManagerCalendar } from './pages/manager/Calendar';
 import { Customers } from './pages/manager/Customers';
-import { Services } from './pages/manager/Services';
+import { Services as ManagerServices } from './pages/manager/Services';
 import { Reports } from './pages/manager/Reports';
 import { ManagerSettings } from './pages/manager/Settings';
+
+import { NotFound } from './pages/NotFound';
 
 // Protected Route component
 const ProtectedRoute: React.FC<{
@@ -84,6 +89,9 @@ const AppRoutes: React.FC = () => {
 
       {/* Public landing */}
       <Route path="/welcome" element={<Welcome />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/about" element={<About />} />
 
       {/* Auth */}
       <Route path="/login" element={<Login />} />
@@ -135,7 +143,7 @@ const AppRoutes: React.FC = () => {
         <ProtectedRoute requiredRole="manager"><Customers /></ProtectedRoute>
       } />
       <Route path="/manager/services" element={
-        <ProtectedRoute requiredRole="manager"><Services /></ProtectedRoute>
+        <ProtectedRoute requiredRole="manager"><ManagerServices /></ProtectedRoute>
       } />
       <Route path="/manager/reports" element={
         <ProtectedRoute requiredRole="manager"><Reports /></ProtectedRoute>
@@ -145,7 +153,7 @@ const AppRoutes: React.FC = () => {
       } />
 
       {/* Catch-all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

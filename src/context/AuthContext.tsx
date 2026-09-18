@@ -47,15 +47,25 @@ const MOCK_USERS: UserProfile[] = [
 ];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check for stored demo session
+  const [user, setUser] = useState<UserProfile | null>(() => {
     const stored = localStorage.getItem('shinewash_demo_user');
     if (stored) {
-      try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+      try { return JSON.parse(stored); } catch { return null; }
     }
+    return null;
+  });
+  const [loading, setLoading] = useState(true);
+
+  const fetchProfile = async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    if (data) setUser(data as UserProfile);
+  };
+
+  useEffect(() => {
     setLoading(false);
 
     // Also try Supabase session
@@ -73,14 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    if (data) setUser(data as UserProfile);
-  };
+
 
   const login = async (email: string, password: string): Promise<{ error: string | null }> => {
     // Demo mode login

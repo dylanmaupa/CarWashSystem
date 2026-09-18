@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Calendar, Users, Settings, BarChart2,
   Bell, ChevronDown, Search, Droplets, LogOut, User,
-  ClipboardList, Wrench,
+  ClipboardList, Wrench, Menu
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -23,6 +23,7 @@ export const ManagerLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => { await logout(); navigate('/login'); };
   const initials = user ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase() : 'M';
@@ -30,10 +31,17 @@ export const ManagerLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#080808', fontFamily: "'Inter', -apple-system, sans-serif", overflow: 'hidden' }}>
 
+      {/* Mobile Overlay */}
+      <div 
+        className={`sidebar-mobile-overlay ${sidebarOpen ? 'sidebar-open' : ''}`} 
+        onClick={() => setSidebarOpen(false)} 
+      />
+
       {/* ── SIDEBAR ── */}
-      <aside style={{
+      <aside className={sidebarOpen ? 'sidebar-open' : ''} style={{
         width: 230, flexShrink: 0, display: 'flex', flexDirection: 'column',
         background: '#080808', borderRight: '1px solid rgba(255,255,255,0.06)',
+        zIndex: 300,
       }}>
         {/* Logo */}
         <div style={{ padding: '28px 24px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -58,6 +66,7 @@ export const ManagerLayout: React.FC<{ children: React.ReactNode }> = ({ childre
               key={item.to}
               to={item.to}
               end={item.to === '/manager'}
+              onClick={() => setSidebarOpen(false)}
               style={({ isActive }) => ({
                 display: 'flex', alignItems: 'center', gap: 10,
                 padding: '10px 12px', borderRadius: 8, textDecoration: 'none',
@@ -102,10 +111,18 @@ export const ManagerLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
         {/* TOPBAR */}
         <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', height: 64, flexShrink: 0, background: 'rgba(8,8,8,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          {/* Search */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 14px', flex: 1, maxWidth: 400 }}>
-            <Search size={14} color="rgba(255,255,255,0.3)" />
-            <input placeholder="Search bookings, customers, vehicles..." style={{ background: 'none', border: 'none', outline: 'none', fontSize: 14, color: '#fff', width: '100%' }} />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button className="mobile-menu-btn" 
+              style={{ display: 'none', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', padding: 4, marginRight: 16 }}
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={24} />
+            </button>
+            {/* Search */}
+            <div className="desktop-search" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 14px', flex: 1, maxWidth: 400 }}>
+              <Search size={14} color="rgba(255,255,255,0.3)" />
+              <input placeholder="Search bookings, customers, vehicles..." style={{ background: 'none', border: 'none', outline: 'none', fontSize: 14, color: '#fff', width: '100%' }} />
+            </div>
           </div>
 
           {/* Right */}

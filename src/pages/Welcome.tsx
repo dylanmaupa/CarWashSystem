@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Droplets, ArrowUpRight, Zap, CalendarCheck, ShieldCheck, Star } from 'lucide-react';
+import { ArrowUpRight, Zap, CalendarCheck, ShieldCheck, Star } from 'lucide-react';
+import { PublicLayout } from '../components/layout/PublicLayout';
 
 /* ─────────────────────────────────────────────
    INTERSECTION REVEAL HOOK
@@ -47,8 +48,6 @@ function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
 
 /* ─────────────────────────────────────────────
    HORIZONTAL ACCORDION FEATURE CARDS
-   Each card is a vertical strip that expands
-   on hover to reveal full content — Pinterest style
 ───────────────────────────────────────────── */
 interface AccordionCard { id: number; label: string; title: string; desc: string; icon: React.ReactNode; num: string; }
 
@@ -56,7 +55,7 @@ const AccordionCards: React.FC<{ cards: AccordionCard[] }> = ({ cards }) => {
   const [active, setActive] = useState<number>(0);
 
   return (
-    <div style={{
+    <div className="accordion-feature-cards" style={{
       display: 'flex', gap: 8, height: 420,
       width: '100%', maxWidth: 1100, margin: '0 auto',
     }}>
@@ -191,61 +190,7 @@ export const Welcome: React.FC = () => {
   ];
 
   return (
-    <div style={{
-      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-      background: '#080808', color: '#fff', overflowX: 'hidden',
-    }}>
-
-      {/* ══════════════ NAVBAR ══════════════ */}
-      <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 clamp(24px, 5vw, 80px)', height: 68,
-        background: 'rgba(8,8,8,0.85)', backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-      }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 32, height: 32, background: '#fff', borderRadius: 8,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Droplets size={16} color="#080808" />
-          </div>
-          <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>
-            ShineWash
-          </span>
-        </div>
-
-        {/* Center links */}
-        <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
-          {['Services', 'Pricing', 'About'].map(item => (
-            <a key={item} href="#" style={{
-              fontSize: 14, color: 'rgba(255,255,255,0.55)', textDecoration: 'none',
-              fontWeight: 500, transition: 'color 0.2s',
-            }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}
-            >
-              {item}
-            </a>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <Link to="/register" style={{
-          padding: '10px 22px', fontSize: 14, fontWeight: 600,
-          color: '#fff', textDecoration: 'none', borderRadius: 10,
-          border: '1px solid rgba(255,255,255,0.25)',
-          transition: 'all 0.2s',
-          background: 'transparent',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#080808'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#fff'; }}
-        >
-          Get a quote
-        </Link>
-      </nav>
+    <PublicLayout>
 
       {/* ══════════════ HERO ══════════════ */}
       <section style={{
@@ -319,7 +264,7 @@ export const Welcome: React.FC = () => {
       </section>
 
       {/* ══════════════ STATS ══════════════ */}
-      <div ref={statsRef} className="lx-reveal" style={{
+      <div ref={statsRef} className="lx-reveal stats-grid-4" style={{
         background: '#0f0f0f',
         borderTop: '1px solid rgba(255,255,255,0.06)',
         borderBottom: '1px solid rgba(255,255,255,0.06)',
@@ -419,26 +364,6 @@ export const Welcome: React.FC = () => {
         </p>
       </section>
 
-      {/* ══════════════ FOOTER ══════════════ */}
-      <footer style={{
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        padding: '32px clamp(24px,5vw,80px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        flexWrap: 'wrap', gap: 16, background: '#080808',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 28, height: 28, background: '#fff', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Droplets size={13} color="#080808" />
-          </div>
-          <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>ShineWash</span>
-        </div>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.2)' }}>© {new Date().getFullYear()} ShineWash · Clean Cars. Brighter Days.</p>
-        <div style={{ display: 'flex', gap: 24 }}>
-          <Link to="/login"    style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>Sign In</Link>
-          <Link to="/register" style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>Register</Link>
-        </div>
-      </footer>
-
       {/* ══════════════ SCOPED STYLES ══════════════ */}
       <style>{`
         @keyframes lx-fadeUp {
@@ -471,9 +396,14 @@ export const Welcome: React.FC = () => {
           transform: translateY(-3px) !important;
           box-shadow: 0 20px 60px rgba(255,255,255,0.15) !important;
         }
+        @media (max-width: 600px) {
+          .lx-step-row { flex-direction: column; gap: 16px !important; padding: 32px 0 !important; }
+          .lx-step-row > div:first-child { text-align: left !important; width: 100% !important; }
+        }
         .lx-step-row { transition: background 0.2s; cursor: default; border-radius: 4px; }
         .lx-step-row:hover { background: rgba(255,255,255,0.02); }
       `}</style>
-    </div>
+    </PublicLayout>
   );
 };
+
