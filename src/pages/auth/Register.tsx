@@ -31,7 +31,7 @@ export const Register: React.FC = () => {
 
   return (
     <div style={{
-      minHeight: '100vh', background: 'linear-gradient(135deg, #F0F5FF 0%, #EFF6FF 100%)',
+      minHeight: '100vh', background: '#080808',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
     }}>
       <div style={{ width: '100%', maxWidth: 480 }}>
@@ -51,7 +51,7 @@ export const Register: React.FC = () => {
         </div>
 
         <div style={{
-          background: 'white', borderRadius: 20, boxShadow: '0 8px 40px rgba(0,0,0,0.10)',
+          background: 'var(--color-surface)', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
           border: '1px solid var(--color-border)', padding: 40,
         }}>
           <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--color-navy)', marginBottom: 6 }}>

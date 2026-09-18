@@ -4,6 +4,9 @@ import { Droplets } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { supabase } from './utils/supabase';
 
+// Landing
+import { Welcome } from './pages/Welcome';
+
 // Auth Pages
 import { Login } from './pages/auth/Login';
 import { Register } from './pages/auth/Register';
@@ -69,7 +72,7 @@ const ProtectedRoute: React.FC<{
 const RootRedirect: React.FC = () => {
   const { user, loading } = useAuth();
   if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/welcome" replace />;
   return <Navigate to={user.role === 'manager' ? '/manager' : '/dashboard'} replace />;
 };
 
@@ -78,6 +81,9 @@ const AppRoutes: React.FC = () => {
     <Routes>
       {/* Root */}
       <Route path="/" element={<RootRedirect />} />
+
+      {/* Public landing */}
+      <Route path="/welcome" element={<Welcome />} />
 
       {/* Auth */}
       <Route path="/login" element={<Login />} />

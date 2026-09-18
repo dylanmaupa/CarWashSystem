@@ -53,7 +53,7 @@ export const Services: React.FC = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
             {services.map(svc => (
               <div key={svc.id} style={{
-                background: 'white', border: `1.5px solid ${svc.is_active ? 'var(--color-border)' : 'var(--color-danger-mid)'}`,
+                background: 'var(--color-surface)', border: `1.5px solid ${svc.is_active ? 'var(--color-border)' : 'var(--color-danger-mid)'}`,
                 borderRadius: 'var(--radius-lg)', padding: 24, position: 'relative',
                 boxShadow: 'var(--shadow-sm)', transition: 'all 0.2s', opacity: svc.is_active ? 1 : 0.65,
               }}>

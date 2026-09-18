@@ -82,7 +82,7 @@ export const ManagerCalendar: React.FC = () => {
 
           {/* Week View */}
           {view === 'week' && (
-            <div style={{ background: 'white', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
+            <div style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
               {/* Header row */}
               <div style={{ display: 'grid', gridTemplateColumns: '140px repeat(7, 1fr)', borderBottom: '2px solid var(--color-border)' }}>
                 <div style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: 'var(--color-text-muted)', background: 'var(--color-bg)' }}>
@@ -141,7 +141,7 @@ export const ManagerCalendar: React.FC = () => {
 
           {/* Month View */}
           {view === 'month' && (
-            <div style={{ background: 'white', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
+            <div style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '2px solid var(--color-border)' }}>
                 {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
                   <div key={d} style={{ padding: '12px 0', textAlign: 'center', fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', background: 'var(--color-bg)', borderLeft: '1px solid var(--color-border)' }}>
@@ -181,7 +181,7 @@ export const ManagerCalendar: React.FC = () => {
 
           {/* Day View */}
           {view === 'day' && (
-            <div style={{ background: 'white', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
+            <div style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
               <div style={{ padding: '14px 20px', background: 'var(--color-primary)', color: 'white', fontWeight: 700, fontSize: 15 }}>
                 {format(currentDate, 'EEEE, MMMM d, yyyy')}
               </div>
@@ -223,7 +223,7 @@ export const ManagerCalendar: React.FC = () => {
 
         {/* Booking Detail Side Panel */}
         {selectedBooking && (
-          <div style={{ width: 320, borderLeft: '1px solid var(--color-border)', padding: '24px 20px', overflowY: 'auto', background: 'white', flexShrink: 0 }}>
+          <div style={{ width: 320, borderLeft: '1px solid var(--color-border)', padding: '24px 20px', overflowY: 'auto', background: 'var(--color-surface)', flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <span style={{ fontWeight: 700, color: 'var(--color-navy)', fontSize: 15 }}>Booking Details</span>
               <button className="btn btn-ghost btn-sm" onClick={() => setSelectedBookingId(null)}>✕</button>

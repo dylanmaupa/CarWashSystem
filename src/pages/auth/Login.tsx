@@ -41,19 +41,19 @@ export const Login: React.FC = () => {
 
   return (
     <div style={{
-      minHeight: '100vh', background: 'linear-gradient(135deg, #F0F5FF 0%, #E8F0FE 50%, #EFF6FF 100%)',
+      minHeight: '100vh', background: 'linear-gradient(135deg, #080808 0%, #0d0d0d 50%, #080808 100%)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
     }}>
       {/* Background decoration */}
       <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
         <div style={{
           position: 'absolute', top: '-20%', right: '-10%', width: 500, height: 500,
-          background: 'radial-gradient(circle, rgba(37,99,235,0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(96,165,250,0.08) 0%, transparent 70%)',
           borderRadius: '50%',
         }} />
         <div style={{
           position: 'absolute', bottom: '-10%', left: '-5%', width: 400, height: 400,
-          background: 'radial-gradient(circle, rgba(13,148,136,0.06) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(52,211,153,0.06) 0%, transparent 70%)',
           borderRadius: '50%',
         }} />
       </div>
@@ -76,7 +76,7 @@ export const Login: React.FC = () => {
 
         {/* Card */}
         <div style={{
-          background: 'white', borderRadius: 20, boxShadow: '0 8px 40px rgba(0,0,0,0.10)',
+          background: 'var(--color-surface)', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
           border: '1px solid var(--color-border)', padding: 40,
         }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-navy)', marginBottom: 6 }}>
@@ -102,9 +102,9 @@ export const Login: React.FC = () => {
             <button
               onClick={() => fillDemo('manager')}
               style={{
-                flex: 1, padding: '8px 12px', background: '#F5F3FF',
-                border: '1px solid #DDD6FE', borderRadius: 8,
-                fontSize: 12, fontWeight: 600, color: '#7C3AED', cursor: 'pointer',
+                flex: 1, padding: '8px 12px', background: 'rgba(167,139,250,0.12)',
+                border: '1px solid rgba(167,139,250,0.25)', borderRadius: 8,
+                fontSize: 12, fontWeight: 600, color: '#A78BFA', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               }}
             >

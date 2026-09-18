@@ -492,8 +492,9 @@ export const BookService: React.FC = () => {
                         {draft.vehicle_registration && (
                           <div style={{
                             display: 'inline-block', marginTop: 4, padding: '2px 8px',
-                            background: 'var(--color-navy)', color: 'white',
+                            background: 'rgba(255,255,255,0.1)', color: '#fff',
                             borderRadius: 4, fontSize: 11, fontWeight: 700, letterSpacing: 1,
+                            border: '1px solid rgba(255,255,255,0.15)',
                           }}>
                             {draft.vehicle_registration}
                           </div>

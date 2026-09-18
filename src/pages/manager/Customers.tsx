@@ -87,7 +87,7 @@ export const Customers: React.FC = () => {
           </div>
 
           {/* Table */}
-          <div style={{ background: 'white', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
             <table className="data-table">
               <thead>
                 <tr>
@@ -156,7 +156,7 @@ export const Customers: React.FC = () => {
 
         {/* Customer Detail Panel */}
         {selected && (
-          <div style={{ width: 300, borderLeft: '1px solid var(--color-border)', padding: '24px 20px', overflowY: 'auto', background: 'white', flexShrink: 0 }}>
+          <div style={{ width: 300, borderLeft: '1px solid var(--color-border)', padding: '24px 20px', overflowY: 'auto', background: 'var(--color-surface)', flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
               <span style={{ fontWeight: 700, color: 'var(--color-navy)', fontSize: 14 }}>Customer Details</span>
               <button className="btn btn-ghost btn-sm" onClick={() => setSelectedId(null)}>✕</button>

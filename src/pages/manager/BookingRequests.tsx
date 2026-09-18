@@ -104,7 +104,7 @@ export const BookingRequests: React.FC = () => {
               { label: 'Declined Requests', value: declined.length, color: 'var(--color-danger)', icon: <XCircle size={22} color="var(--color-danger)" /> },
               { label: 'Conflicts Detected', value: conflicted.length, color: 'var(--color-danger)', icon: <AlertTriangle size={22} color="var(--color-danger)" /> },
             ].map(k => (
-              <div key={k.label} style={{ background: 'white', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div key={k.label} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12 }}>
                 {k.icon}
                 <div>
                   <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-navy)', lineHeight: 1 }}>{k.value}</div>
@@ -139,7 +139,7 @@ export const BookingRequests: React.FC = () => {
           </div>
 
           {/* Table */}
-          <div style={{ background: 'white', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
             <table className="data-table">
               <thead>
                 <tr>
@@ -181,7 +181,7 @@ export const BookingRequests: React.FC = () => {
                         <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 1 }}>
                           {booking.vehicle_colour} • {vehicleTypeLabel(booking.vehicle_type)}
                         </div>
-                        <div style={{ display: 'inline-flex', marginTop: 3, padding: '1px 7px', background: 'var(--color-navy)', color: 'white', borderRadius: 3, fontSize: 10, fontWeight: 800, letterSpacing: 1 }}>
+                        <div style={{ display: 'inline-flex', marginTop: 3, padding: '2px 8px', background: 'rgba(255,255,255,0.1)', color: '#fff', borderRadius: 4, fontSize: 10, fontWeight: 800, letterSpacing: 1, border: '1px solid rgba(255,255,255,0.15)' }}>
                           {booking.vehicle_registration}
                         </div>
                       </td>

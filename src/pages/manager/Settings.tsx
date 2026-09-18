@@ -53,7 +53,7 @@ export const ManagerSettings: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 24 }}>
           {/* Settings Navigation */}
           <div>
-            <div style={{ background: 'white', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+            <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
               {[
                 { key: 'Business Info', icon: <Building2 size={16} /> },
                 { key: 'Operating Hours', icon: <Clock size={16} /> },
