@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ClipboardList, CheckCircle, Clock, XCircle, Calendar, BarChart2, RefreshCw, ChevronRight, Mail } from 'lucide-react';
 import { ManagerLayout } from '../../components/layout/ManagerLayout';
-import { useMockBookings } from '../../hooks/useBookings';
+import { useBookings } from '../../hooks/useBookings';
 import { format } from 'date-fns';
 
 export const ManagerOverview: React.FC = () => {
-  const { getAllBookings } = useMockBookings();
+  const { getAllBookings } = useBookings();
   const all = getAllBookings();
   const pending = all.filter(b => b.status === 'pending');
   const approved = all.filter(b => b.status === 'approved');
@@ -102,18 +102,14 @@ export const ManagerOverview: React.FC = () => {
           {/* Right column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Calendar Sync */}
-            <div style={{
-              background: 'linear-gradient(135deg, var(--color-success-light), #CCFBF1)',
-              border: '1px solid var(--color-success-mid)', borderRadius: 'var(--radius-lg)', padding: 20,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                <RefreshCw size={18} style={{ color: 'var(--color-success)' }} />
-                <span style={{ fontWeight: 700, color: 'var(--color-navy)' }}>Calendar Sync</span>
+            <div style={{ background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)', borderRadius: 16, padding: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, color: '#34D399', marginBottom: 10, fontSize: 14 }}>
+                <RefreshCw size={16} /> Calendar Sync
               </div>
-              <p style={{ fontSize: 12, color: '#134E4A', lineHeight: 1.5, marginBottom: 10 }}>
+              <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, marginBottom: 12 }}>
                 Approved bookings are automatically added to both calendars.
               </p>
-              <div style={{ padding: '8px 12px', background: 'var(--color-success-mid)', borderRadius: 8, fontSize: 11, color: '#134E4A', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ padding: '8px 12px', background: 'rgba(52,211,153,0.12)', borderRadius: 8, fontSize: 11, color: '#34D399', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <CheckCircle size={14} /> Sync is active and working
               </div>
             </div>

@@ -5,7 +5,8 @@ import {
   ChevronRight, Droplets, Sparkles, CheckCircle, XCircle, CreditCard,
 } from 'lucide-react';
 import { CustomerLayout } from '../../components/layout/CustomerLayout';
-import { useMockBookings } from '../../hooks/useBookings';
+import { useBookings } from '../../hooks/useBookings';
+import { useAuth } from '../../context/AuthContext';
 import { format } from 'date-fns';
 import type { Booking } from '../../types';
 
@@ -38,8 +39,9 @@ const DATE_COLOR: Record<string, string> = {
 const FILTERS = ['all', 'pending', 'approved', 'completed', 'declined', 'cancelled'];
 
 export const MyBookings: React.FC = () => {
-  const { getCustomerBookings, updateBookingStatus } = useMockBookings();
-  const bookings = getCustomerBookings('customer-1');
+  const { user } = useAuth();
+  const { getCustomerBookings, updateBookingStatus } = useBookings();
+  const bookings = getCustomerBookings(user?.id || '');
   const [filter, setFilter] = useState('all');
 
   const counts: Record<string, number> = {

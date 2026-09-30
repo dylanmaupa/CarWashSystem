@@ -1,21 +1,16 @@
 import React, { useState } from 'react';
 import { CheckCircle, XCircle, X, RefreshCw, AlertTriangle, Search, Car, Calendar, Clock, MapPin, RefreshCcw, Droplets, Sparkles, FileText } from 'lucide-react';
 import { ManagerLayout } from '../../components/layout/ManagerLayout';
-import { useMockBookings } from '../../hooks/useBookings';
+import { useBookings } from '../../hooks/useBookings';
 import { format } from 'date-fns';
 import type { Booking } from '../../types';
 import { DECLINE_REASONS } from '../../types';
 
 type FilterTab = 'all' | 'pending' | 'approved' | 'declined' | 'conflict';
 
-const MOCK_CUSTOMERS: Record<string, { first_name: string; last_name: string; email: string; phone: string }> = {
-  'customer-1': { first_name: 'Alex', last_name: 'Carter', email: 'alex.carter@email.com', phone: '(555) 123-4567' },
-  'customer-2': { first_name: 'Sarah', last_name: 'Johnson', email: 'sarah.j@email.com', phone: '(555) 234-5678' },
-  'customer-3': { first_name: 'David', last_name: 'Lee', email: 'david.lee@email.com', phone: '(555) 345-6789' },
-};
 
 export const BookingRequests: React.FC = () => {
-  const { getAllBookings, updateBookingStatus, checkConflict } = useMockBookings();
+  const { getAllBookings, updateBookingStatus, checkConflict } = useBookings();
   const all = getAllBookings();
 
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
@@ -41,14 +36,14 @@ export const BookingRequests: React.FC = () => {
       const s = search.toLowerCase();
       base = base.filter(b =>
         `${b.vehicle_make} ${b.vehicle_model} ${b.vehicle_registration}`.toLowerCase().includes(s) ||
-        (MOCK_CUSTOMERS[b.customer_id]?.first_name + ' ' + MOCK_CUSTOMERS[b.customer_id]?.last_name).toLowerCase().includes(s)
+        `${b.customer?.first_name || ''} ${b.customer?.last_name || ''}`.toLowerCase().includes(s)
       );
     }
     return base;
   })();
 
   const selected = selectedId ? all.find(b => b.id === selectedId) : null;
-  const selectedCustomer = selected ? MOCK_CUSTOMERS[selected.customer_id] : null;
+  const selectedCustomer = selected ? selected.customer : null;
   const hasConflict = selected ? checkConflict(selected.requested_date, selected.requested_time, selected.id) : false;
 
   const handleApprove = (id: string) => {
@@ -154,7 +149,7 @@ export const BookingRequests: React.FC = () => {
               </thead>
               <tbody>
                 {filtered.map(booking => {
-                  const cust = MOCK_CUSTOMERS[booking.customer_id];
+                  const cust = booking.customer;
                   const conflict = checkConflict(booking.requested_date, booking.requested_time, booking.id);
                   const isSelected = booking.id === selectedId;
                   return (
@@ -283,6 +278,30 @@ export const BookingRequests: React.FC = () => {
             </div>
 
             {/* Booking Info */}
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-navy)', marginBottom: 10 }}>Customer Contact</div>
+            {selectedCustomer && (
+              <div style={{
+                background: 'var(--color-bg)', border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)', padding: '10px 14px', marginBottom: 16,
+                display: 'flex', flexDirection: 'column', gap: 8,
+              }}>
+                <a href={`mailto:${selectedCustomer.email}`} style={{
+                  display: 'flex', alignItems: 'center', gap: 8, fontSize: 12,
+                  color: 'var(--color-primary)', textDecoration: 'none',
+                }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  {selectedCustomer.email}
+                </a>
+                <a href={`tel:${selectedCustomer.phone}`} style={{
+                  display: 'flex', alignItems: 'center', gap: 8, fontSize: 12,
+                  color: 'var(--color-text-muted)', textDecoration: 'none',
+                }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.71 4.4a2 2 0 0 1 2-2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 17z"/></svg>
+                  {selectedCustomer.phone}
+                </a>
+              </div>
+            )}
+
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-navy)', marginBottom: 14 }}>Booking Information</div>
             {[
               { icon: <Calendar size={14} />, value: format(new Date(selected.requested_date), 'EEE, MMM d, yyyy') },
@@ -364,7 +383,7 @@ export const BookingRequests: React.FC = () => {
                 <label key={r.value} style={{
                   display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
                   borderRadius: 8, border: '1px solid var(--color-border)', cursor: 'pointer',
-                  background: declineReason === r.label ? 'var(--color-primary-light)' : 'white',
+                  background: declineReason === r.label ? 'var(--color-primary-light)' : 'var(--color-surface)',
                   borderColor: declineReason === r.label ? 'var(--color-primary)' : 'var(--color-border)',
                 }}>
                   <input type="radio" name="decline" checked={declineReason === r.label} onChange={() => setDeclineReason(r.label)} />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, CheckCircle, RefreshCw, X, Car, Droplets, Sparkles, Calendar, MapPin, FileText, Edit2 } from 'lucide-react';
 import { ManagerLayout } from '../../components/layout/ManagerLayout';
-import { useMockBookings } from '../../hooks/useBookings';
+import { useBookings } from '../../hooks/useBookings';
 import { format, startOfWeek, addDays, addMonths, subMonths, startOfMonth, getDaysInMonth, getDay, isSameDay } from 'date-fns';
 
 type CalView = 'day' | 'week' | 'month';
@@ -17,7 +17,7 @@ const blockColor = (status: string, category?: string) => {
 };
 
 export const ManagerCalendar: React.FC = () => {
-  const { getAllBookings } = useMockBookings();
+  const { getAllBookings } = useBookings();
   const bookings = getAllBookings();
   const [view, setView] = useState<CalView>('week');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -93,11 +93,11 @@ export const ManagerCalendar: React.FC = () => {
                   return (
                     <div key={day.toString()} style={{
                       padding: '10px 8px', textAlign: 'center', fontSize: 12,
-                      background: isToday ? 'var(--color-primary)' : 'var(--color-bg)',
-                      color: isToday ? 'white' : 'var(--color-text)',
+                      background: isToday ? 'rgba(255,255,255,0.06)' : 'var(--color-bg)',
+                      color: isToday ? '#fff' : 'var(--color-text)',
                       borderLeft: '1px solid var(--color-border)',
                     }}>
-                      <div style={{ fontWeight: 600, textTransform: 'uppercase', fontSize: 10, opacity: isToday ? 0.8 : 0.6 }}>
+                      <div style={{ fontWeight: 600, textTransform: 'uppercase', fontSize: 10, opacity: isToday ? 1 : 0.6, color: isToday ? 'var(--color-primary)' : 'inherit' }}>
                         {format(day, 'EEE')}
                       </div>
                       <div style={{ fontWeight: 800, fontSize: 16 }}>{format(day, 'd')}</div>
@@ -117,7 +117,7 @@ export const ManagerCalendar: React.FC = () => {
                     const dayBookings = getBookingsForDay(day);
                     const relevant = dayBookings.slice(0, 2);
                     return (
-                      <div key={day.toString()} style={{ padding: 6, borderLeft: '1px solid var(--color-border)', minHeight: 80, background: isSameDay(day, today) ? 'rgba(37,99,235,0.02)' : 'white' }}>
+                      <div key={day.toString()} style={{ padding: 6, borderLeft: '1px solid var(--color-border)', minHeight: 80, background: isSameDay(day, today) ? 'rgba(255,255,255,0.03)' : 'transparent' }}>
                         {relevant.map(b => {
                           const colors = blockColor(b.status, b.service?.category);
                           return (
@@ -151,15 +151,15 @@ export const ManagerCalendar: React.FC = () => {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
                 {Array.from({ length: (startDow === 0 ? 6 : startDow - 1) }).map((_, i) => (
-                  <div key={`e${i}`} style={{ minHeight: 100, borderRight: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', background: '#FAFAFA' }} />
+                  <div key={`e${i}`} style={{ minHeight: 100, borderRight: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', background: 'rgba(255,255,255,0.02)' }} />
                 ))}
                 {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
                   const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
                   const dayBks = getBookingsForDay(d);
                   const isT = isSameDay(d, today);
                   return (
-                    <div key={day} style={{ minHeight: 100, padding: 6, borderRight: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', background: isT ? 'rgba(37,99,235,0.03)' : 'white' }}>
-                      <div style={{ width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: isT ? 700 : 500, background: isT ? 'var(--color-primary)' : 'transparent', color: isT ? 'white' : 'var(--color-text)', marginBottom: 4 }}>
+                    <div key={day} style={{ minHeight: 100, padding: 6, borderRight: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', background: isT ? 'rgba(255,255,255,0.03)' : 'transparent' }}>
+                      <div style={{ width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: isT ? 700 : 500, background: isT ? 'rgba(255,255,255,0.1)' : 'transparent', color: isT ? '#fff' : 'var(--color-text)', marginBottom: 4 }}>
                         {day}
                       </div>
                       {dayBks.slice(0, 2).map(b => {

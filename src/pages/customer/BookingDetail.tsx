@@ -5,7 +5,7 @@ import {
   RefreshCw, X, HelpCircle, ChevronRight, Droplets, Sparkles, CreditCard,
 } from 'lucide-react';
 import { CustomerLayout } from '../../components/layout/CustomerLayout';
-import { useMockBookings } from '../../hooks/useBookings';
+import { useBookings } from '../../hooks/useBookings';
 import { format } from 'date-fns';
 
 const statusClasses: Record<string, string> = {
@@ -36,7 +36,7 @@ const getTimelineProgress = (status: string) => {
 
 export const BookingDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { getAllBookings } = useMockBookings();
+  const { getAllBookings } = useBookings();
   const booking = getAllBookings().find(b => b.id === id);
 
   if (!booking) {

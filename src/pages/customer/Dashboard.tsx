@@ -6,7 +6,7 @@ import {
   Activity, Zap,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useMockBookings } from '../../hooks/useBookings';
+import { useBookings } from '../../hooks/useBookings';
 import { CustomerLayout } from '../../components/layout/CustomerLayout';
 import { format } from 'date-fns';
 
@@ -151,8 +151,8 @@ const HeroCanvas: React.FC = () => {
 ══════════════════════════════════════════════ */
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const { getCustomerBookings } = useMockBookings();
-  const bookings = getCustomerBookings('customer-1');
+  const { getCustomerBookings } = useBookings();
+  const bookings = getCustomerBookings(user?.id || '');
   const [hoveredStat, setHoveredStat] = useState<string | null>(null);
 
   const upcoming  = bookings.filter(b => ['pending', 'approved'].includes(b.status));

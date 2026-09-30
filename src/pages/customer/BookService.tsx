@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { CustomerLayout } from '../../components/layout/CustomerLayout';
 import { useAuth } from '../../context/AuthContext';
-import { useMockBookings } from '../../hooks/useBookings';
+import { useBookings } from '../../hooks/useBookings';
 import { MOCK_SERVICES, VEHICLE_TYPES, TIME_SLOTS } from '../../types';
 import type { VehicleType } from '../../types';
 import { format, addDays, startOfMonth, getDaysInMonth, getDay } from 'date-fns';
@@ -42,7 +42,7 @@ type BookingDraft = {
 export const BookService: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { createBooking } = useMockBookings();
+  const { createBooking } = useBookings();
 
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<BookingDraft>({
@@ -340,37 +340,227 @@ export const BookService: React.FC = () => {
             )}
 
             {/* STEP 3: Choose Time */}
-            {step === 3 && (
-              <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--color-navy)', marginBottom: 6 }}>
-                  Select Time Slot
-                </h2>
-                <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: 24 }}>
-                  Choose an available time slot for your service on {format(new Date(draft.requested_date), 'MMMM d, yyyy')}.
-                </p>
+            {step === 3 && (() => {
+              const amSlots = TIME_SLOTS.filter(s => s.includes('AM'));
+              const pmSlots = TIME_SLOTS.filter(s => s.includes('PM'));
 
-                <div className="time-slots-grid">
-                  {TIME_SLOTS.map(slot => {
-                    const unavail = UNAVAILABLE_TIMES.includes(slot);
-                    const isSelected = draft.requested_time === slot;
+              const SlotGroup = ({ label, slots, icon }: { label: string; slots: string[]; icon: React.ReactNode }) => (
+                <div style={{ marginBottom: 28 }}>
+                  {/* Group header */}
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14,
+                  }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: 8,
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: 'rgba(255,255,255,0.5)',
+                    }}>{icon}</div>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#fff', fontSize: 14, letterSpacing: '-0.01em' }}>{label}</div>
+                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 1 }}>
+                        {slots.filter(s => !UNAVAILABLE_TIMES.includes(s)).length} slots available
+                      </div>
+                    </div>
+                    <div style={{
+                      marginLeft: 'auto', height: 1, flex: 1,
+                      background: 'rgba(255,255,255,0.06)',
+                    }} />
+                  </div>
 
-                    return (
-                      <button
-                        key={slot}
-                        type="button"
-                        disabled={unavail}
-                        onClick={() => setDraft({ ...draft, requested_time: slot })}
-                        className={`time-slot-btn ${isSelected ? 'selected' : ''} ${unavail ? 'unavailable' : ''}`}
-                      >
-                        <Clock size={16} />
-                        {slot}
-                        {unavail && <span style={{ fontSize: 10, display: 'block', color: 'var(--color-text-subtle)' }}>Full</span>}
-                      </button>
-                    );
-                  })}
+                  {/* Slot cards */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+                    gap: 10,
+                  }}>
+                    {slots.map(slot => {
+                      const unavail = UNAVAILABLE_TIMES.includes(slot);
+                      const isSelected = draft.requested_time === slot;
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          disabled={unavail}
+                          onClick={() => !unavail && setDraft({ ...draft, requested_time: slot })}
+                          style={{
+                            position: 'relative',
+                            padding: '16px 10px',
+                            borderRadius: 12,
+                            border: isSelected
+                              ? '2px solid var(--color-primary)'
+                              : unavail
+                              ? '1.5px solid rgba(255,255,255,0.05)'
+                              : '1.5px solid rgba(255,255,255,0.09)',
+                            background: isSelected
+                              ? 'var(--color-primary)'
+                              : unavail
+                              ? 'rgba(255,255,255,0.02)'
+                              : 'rgba(255,255,255,0.04)',
+                            cursor: unavail ? 'not-allowed' : 'pointer',
+                            transition: 'all 0.18s cubic-bezier(0.4,0,0.2,1)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 4,
+                            outline: 'none',
+                            boxShadow: isSelected ? '0 0 0 4px rgba(96,165,250,0.18), 0 4px 20px rgba(96,165,250,0.25)' : 'none',
+                            transform: isSelected ? 'translateY(-2px)' : 'none',
+                            opacity: unavail ? 0.35 : 1,
+                          }}
+                          onMouseEnter={e => {
+                            if (!unavail && !isSelected) {
+                              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.08)';
+                              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.2)';
+                              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)';
+                            }
+                          }}
+                          onMouseLeave={e => {
+                            if (!unavail && !isSelected) {
+                              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)';
+                              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.09)';
+                              (e.currentTarget as HTMLButtonElement).style.transform = 'none';
+                            }
+                          }}
+                        >
+                          {/* Time text */}
+                          <span style={{
+                            fontSize: 17,
+                            fontWeight: 800,
+                            letterSpacing: '-0.03em',
+                            color: isSelected ? '#fff' : unavail ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.85)',
+                            textDecoration: unavail ? 'line-through' : 'none',
+                            lineHeight: 1,
+                          }}>
+                            {slot.split(' ')[0]}
+                          </span>
+                          <span style={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            letterSpacing: '0.06em',
+                            color: isSelected ? 'rgba(255,255,255,0.75)' : unavail ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.35)',
+                          }}>
+                            {slot.split(' ')[1]}
+                          </span>
+
+                          {/* Full badge */}
+                          {unavail && (
+                            <span style={{
+                              position: 'absolute', top: 6, right: 6,
+                              background: 'rgba(239,68,68,0.18)',
+                              color: '#F87171',
+                              border: '1px solid rgba(239,68,68,0.25)',
+                              borderRadius: 4,
+                              fontSize: 9, fontWeight: 700,
+                              padding: '1px 5px', letterSpacing: '0.05em',
+                            }}>FULL</span>
+                          )}
+
+                          {/* Selected checkmark */}
+                          {isSelected && (
+                            <div style={{
+                              position: 'absolute', top: 6, right: 6,
+                              width: 16, height: 16,
+                              borderRadius: '50%',
+                              background: 'rgba(255,255,255,0.25)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}>
+                              <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+                                <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+
+              return (
+                <div>
+                  {/* Header */}
+                  <div style={{ marginBottom: 28 }}>
+                    <h2 style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 4, letterSpacing: '-0.03em' }}>
+                      Choose a Time
+                    </h2>
+                    <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>
+                      Appointment for <span style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>{format(new Date(draft.requested_date), 'EEEE, MMMM d')}</span>.
+                      {selectedService && (
+                        <> Service duration is approx. <span style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>{selectedService.duration_minutes} min</span>.</>
+                      )}
+                    </p>
+                  </div>
+
+                  {/* AM Group */}
+                  <SlotGroup
+                    label="Morning"
+                    slots={amSlots}
+                    icon={
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                      </svg>
+                    }
+                  />
+
+                  {/* PM Group */}
+                  <SlotGroup
+                    label="Afternoon"
+                    slots={pmSlots}
+                    icon={
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                      </svg>
+                    }
+                  />
+
+                  {/* Selection confirmation bar */}
+                  {draft.requested_time && (
+                    <div style={{
+                      marginTop: 4,
+                      padding: '14px 18px',
+                      borderRadius: 12,
+                      background: 'linear-gradient(135deg, rgba(96,165,250,0.12) 0%, rgba(96,165,250,0.06) 100%)',
+                      border: '1px solid rgba(96,165,250,0.25)',
+                      display: 'flex', alignItems: 'center', gap: 12,
+                    }}>
+                      <div style={{
+                        width: 36, height: 36, borderRadius: 10,
+                        background: 'var(--color-primary)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                        boxShadow: '0 4px 12px rgba(96,165,250,0.3)',
+                      }}>
+                        <Clock size={16} color="white" />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 1 }}>Selected time</div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
+                          {draft.requested_time}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setDraft({ ...draft, requested_time: '' })}
+                        style={{
+                          marginLeft: 'auto', background: 'none', border: 'none',
+                          color: 'rgba(255,255,255,0.3)', cursor: 'pointer',
+                          fontSize: 11, fontWeight: 600, padding: '4px 8px',
+                          borderRadius: 6,
+                          transition: 'color 0.15s',
+                        }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.6)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.3)'; }}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
 
             {/* STEP 4: Special Instructions & Confirmation */}
             {step === 4 && (

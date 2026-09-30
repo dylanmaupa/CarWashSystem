@@ -5,7 +5,8 @@ import {
   RefreshCw, Droplets, Sparkles, CheckCircle,
 } from 'lucide-react';
 import { CustomerLayout } from '../../components/layout/CustomerLayout';
-import { useMockBookings } from '../../hooks/useBookings';
+import { useBookings } from '../../hooks/useBookings';
+import { useAuth } from '../../context/AuthContext';
 import { format, getDaysInMonth, getDay, addMonths, subMonths, isSameDay, startOfMonth } from 'date-fns';
 
 /* ─── colour by status/category ─── */
@@ -16,8 +17,9 @@ const serviceColor = (category?: string, status?: string) => {
 };
 
 export const CustomerCalendar: React.FC = () => {
-  const { getCustomerBookings } = useMockBookings();
-  const bookings = getCustomerBookings('customer-1');
+  const { user } = useAuth();
+  const { getCustomerBookings } = useBookings();
+  const bookings = getCustomerBookings(user?.id || '');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
@@ -91,37 +93,70 @@ export const CustomerCalendar: React.FC = () => {
             </div>
 
             {/* Day headers */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 4, marginBottom: 4 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', marginBottom: 0, width: '100%' }}>
               {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-                <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', padding: '6px 0' }}>{d}</div>
+                <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', padding: '6px 0 10px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{d}</div>
               ))}
             </div>
 
             {/* Grid cells */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 4 }}>
-              {Array.from({ length: startDow }).map((_, i) => <div key={`e${i}`} />)}
-              {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', width: '100%' }}>
+              {Array.from({ length: startDow }).map((_, i) => (
+                <div key={`e${i}`} style={{ minHeight: 96, borderBottom: '1px solid rgba(255,255,255,0.04)' }} />
+              ))}
+              {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day, idx) => {
                 const dayDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
                 dayDate.setHours(0, 0, 0, 0);
                 const isToday    = isSameDay(dayDate, today);
                 const isSelected = selectedDate && isSameDay(dayDate, selectedDate);
                 const dayBookings = getBookingsForDay(day);
+                const col = (startDow + idx) % 7;
 
                 return (
-                  <div key={day} onClick={() => setSelectedDate(dayDate)} style={{
-                    minHeight: 72, padding: '6px 4px', borderRadius: 8, cursor: 'pointer',
-                    border: `1.5px solid ${isSelected ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.04)'}`,
-                    background: isSelected ? 'rgba(255,255,255,0.06)' : isToday ? 'rgba(255,255,255,0.04)' : 'transparent',
-                    transition: 'all 0.15s',
-                  }}
+                  <div
+                    key={day}
+                    onClick={() => setSelectedDate(dayDate)}
+                    style={{
+                      minHeight: 96,
+                      padding: '8px 6px 6px',
+                      cursor: 'pointer',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden',
+                      borderTop: '1px solid rgba(255,255,255,0.06)',
+                      borderRight: col < 6 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                      borderBottom: '1px solid rgba(255,255,255,0.04)',
+                      background: isSelected ? 'rgba(96,165,250,0.08)' : isToday ? 'rgba(255,255,255,0.03)' : 'transparent',
+                      outline: isSelected ? '1.5px solid rgba(96,165,250,0.4)' : 'none',
+                      outlineOffset: '-1.5px',
+                      transition: 'background 0.15s',
+                    }}
                     onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
-                    onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = isToday ? 'rgba(255,255,255,0.04)' : 'transparent'; }}
+                    onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = isToday ? 'rgba(255,255,255,0.03)' : 'transparent'; }}
                   >
-                    <div style={{ width: 26, height: 26, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: isToday ? 700 : 400, margin: '0 auto 4px', background: isToday ? '#fff' : 'transparent', color: isToday ? '#080808' : 'rgba(255,255,255,0.65)' }}>
+                    <div style={{
+                      width: 26, height: 26, borderRadius: '50%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 12, fontWeight: isToday ? 700 : 500,
+                      marginBottom: 4,
+                      background: isToday ? '#fff' : 'transparent',
+                      color: isToday ? '#080808' : isSelected ? '#60A5FA' : 'rgba(255,255,255,0.6)',
+                    }}>
                       {day}
                     </div>
                     {dayBookings.map(b => (
-                      <div key={b.id} onClick={e => { e.stopPropagation(); setSelectedDate(dayDate); setSelectedBookingId(b.id); }} style={{ marginTop: 2, padding: '2px 5px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: serviceColor(b.service?.category, b.status) + '22', color: serviceColor(b.service?.category, b.status), borderLeft: `3px solid ${serviceColor(b.service?.category, b.status)}`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <div
+                        key={b.id}
+                        onClick={e => { e.stopPropagation(); setSelectedDate(dayDate); setSelectedBookingId(b.id); }}
+                        style={{
+                          marginTop: 2, padding: '2px 5px', borderRadius: 4,
+                          fontSize: 10, fontWeight: 600,
+                          background: serviceColor(b.service?.category, b.status) + '22',
+                          color: serviceColor(b.service?.category, b.status),
+                          borderLeft: `3px solid ${serviceColor(b.service?.category, b.status)}`,
+                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                          maxWidth: '100%',
+                        }}
+                      >
                         {b.requested_time} {b.service?.name}
                       </div>
                     ))}

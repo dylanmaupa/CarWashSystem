@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { CheckCircle, Calendar, Clock, Car, MapPin, FileText, Droplets, Sparkles, CreditCard } from 'lucide-react';
+import { CheckCircle, Calendar, Clock, Car, MapPin, FileText, Droplets, Sparkles, CreditCard, Phone, Mail, MessageSquare } from 'lucide-react';
 import { CustomerLayout } from '../../components/layout/CustomerLayout';
 import { format } from 'date-fns';
 import type { Booking, Service } from '../../types';
@@ -141,8 +141,9 @@ export const BookingConfirmation: React.FC = () => {
                     {booking.vehicle_colour} • {booking.vehicle_type.charAt(0).toUpperCase() + booking.vehicle_type.slice(1)}
                   </span>
                   <div style={{
-                    padding: '2px 10px', background: 'var(--color-navy)', color: 'white',
-                    borderRadius: 4, fontSize: 12, fontWeight: 700, letterSpacing: 1,
+                    padding: '3px 10px', background: 'rgba(255,255,255,0.12)', color: '#fff',
+                    borderRadius: 4, fontSize: 12, fontWeight: 800, letterSpacing: 1.5,
+                    border: '1px solid rgba(255,255,255,0.2)',
                   }}>
                     {booking.vehicle_registration}
                   </div>
@@ -156,6 +157,38 @@ export const BookingConfirmation: React.FC = () => {
                 <div style={{ fontSize: 13, color: 'var(--color-text)' }}>{booking.vehicle_notes}</div>
               </div>
             )}
+          </div>
+
+          {/* Manager Contact */}
+          <div className="card" style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <MessageSquare size={16} style={{ color: 'var(--color-primary)' }} />
+              <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-navy)' }}>Need to reach out?</h2>
+            </div>
+            <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 14, lineHeight: 1.5 }}>
+              While your booking is under review, feel free to contact the manager directly.
+            </p>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <a href="tel:+15550001234" style={{
+                display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px',
+                background: 'var(--color-primary-light)', border: '1px solid var(--color-primary-mid)',
+                borderRadius: 8, fontSize: 13, fontWeight: 600, color: 'var(--color-primary)',
+                textDecoration: 'none',
+              }}>
+                <Phone size={14} /> (555) 000-1234
+              </a>
+              <a href="mailto:manager@shinewash.com" style={{
+                display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px',
+                background: 'var(--color-bg)', border: '1px solid var(--color-border)',
+                borderRadius: 8, fontSize: 13, fontWeight: 600, color: 'var(--color-text-muted)',
+                textDecoration: 'none',
+              }}>
+                <Mail size={14} /> manager@shinewash.com
+              </a>
+            </div>
+            <div style={{ marginTop: 12, fontSize: 12, color: 'var(--color-text-muted)', display: 'flex', gap: 6, alignItems: 'center' }}>
+              <Clock size={12} /> Business hours: Mon–Sat, 8:00 AM – 6:00 PM
+            </div>
           </div>
 
           {/* Payment Notice */}

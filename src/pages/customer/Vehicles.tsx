@@ -5,20 +5,9 @@ import { CustomerLayout } from '../../components/layout/CustomerLayout';
 import type { SavedVehicle, VehicleType } from '../../types';
 import { VEHICLE_TYPES } from '../../types';
 
-const INITIAL_VEHICLES: SavedVehicle[] = [
-  {
-    id: 'v1', user_id: 'customer-1', make: 'Toyota', model: 'Fortuner',
-    vehicle_type: 'suv', colour: 'White', registration_number: 'ABC 1234',
-    year: 2022, notes: 'Focus on wheels and lower panels. Please use eco-friendly products.',
-    is_default: true, created_at: new Date().toISOString(),
-  },
-  {
-    id: 'v2', user_id: 'customer-1', make: 'BMW', model: '3 Series',
-    vehicle_type: 'sedan', colour: 'Black', registration_number: 'XYZ 5678',
-    year: 2021, notes: 'Extra care on the interior leather. Remove seat covers before cleaning.',
-    is_default: false, created_at: new Date().toISOString(),
-  },
-];
+import { useAuth } from '../../context/AuthContext';
+
+const INITIAL_VEHICLES: SavedVehicle[] = [];
 
 type VehicleFormData = Omit<SavedVehicle, 'id' | 'user_id' | 'created_at'>;
 const EMPTY_FORM: VehicleFormData = {
@@ -36,6 +25,7 @@ const VEHICLE_ICONS: Record<VehicleType, React.ReactNode> = {
 };
 
 export const Vehicles: React.FC = () => {
+  const { user } = useAuth();
   const [vehicles, setVehicles] = useState<SavedVehicle[]>(INITIAL_VEHICLES);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -50,7 +40,7 @@ export const Vehicles: React.FC = () => {
     if (editId) {
       setVehicles(prev => prev.map(v => v.id === editId ? { ...v, ...form } : v));
     } else {
-      const newV: SavedVehicle = { ...form, id: `v${Date.now()}`, user_id: 'customer-1', created_at: new Date().toISOString() };
+      const newV: SavedVehicle = { ...form, id: `v${Date.now()}`, user_id: user?.id || 'unknown', created_at: new Date().toISOString() };
       setVehicles(prev => [...prev, newV]);
     }
     setShowForm(false);

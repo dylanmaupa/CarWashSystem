@@ -22,85 +22,59 @@ interface RegisterData {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// ---- MOCK USERS (for demo without Supabase configured) ----
-const MOCK_USERS: UserProfile[] = [
-  {
-    id: 'customer-1',
-    first_name: 'Alex',
-    last_name: 'Carter',
-    email: 'alex.carter@email.com',
-    phone: '(555) 123-4567',
-    role: 'customer',
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'manager-1',
-    first_name: 'Mike',
-    last_name: 'Chen',
-    email: 'mike.chen@shinewash.com',
-    phone: '(555) 987-6543',
-    role: 'manager',
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-];
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    const stored = localStorage.getItem('shinewash_demo_user');
-    if (stored) {
-      try { return JSON.parse(stored); } catch { return null; }
-    }
-    return null;
-  });
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    if (data) setUser(data as UserProfile);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+        
+      if (data && !error) {
+        setUser(data as UserProfile);
+      } else {
+        setUser(null);
+      }
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    setLoading(false);
-
-    // Also try Supabase session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         fetchProfile(session.user.id);
+      } else {
+        setLoading(false);
       }
-    }).catch(() => { /* Supabase not configured — use demo mode */ });
+    });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) fetchProfile(session.user.id);
-      else if (!localStorage.getItem('shinewash_demo_user')) setUser(null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
     });
 
     return () => listener.subscription.unsubscribe();
   }, []);
 
-
-
   const login = async (email: string, password: string): Promise<{ error: string | null }> => {
-    // Demo mode login
-    const demo = MOCK_USERS.find(u => u.email === email);
-    if (demo && password === 'demo123') {
-      setUser(demo);
-      localStorage.setItem('shinewash_demo_user', JSON.stringify(demo));
-      return { error: null };
-    }
-
-    // Supabase login
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return { error: error.message };
       return { error: null };
-    } catch {
-      return { error: 'Login failed. Use demo credentials or configure Supabase.' };
+    } catch (err: any) {
+      return { error: err.message || 'Login failed' };
     }
   };
 
@@ -110,8 +84,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: data.email,
         password: data.password,
       });
-      if (!error && authData.user) {
-        const newProfile: UserProfile = {
+      
+      if (error) return { error: error.message };
+      
+      if (authData.user) {
+        const newProfile = {
           id: authData.user.id,
           first_name: data.first_name,
           last_name: data.last_name,
@@ -119,40 +96,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           phone: data.phone || null,
           role: 'customer',
           avatar_url: null,
-          created_at: new Date().toISOString(),
         };
-        try {
-          await supabase.from('profiles').insert(newProfile);
-        } catch {
-          // ignore profile insert error
+        
+        const { error: profileError } = await supabase.from('profiles').insert([newProfile]);
+        
+        if (profileError) {
+          console.error("Profile creation error:", profileError);
+          return { error: 'Account created but failed to save profile details.' };
         }
-        setUser(newProfile);
-        localStorage.setItem('shinewash_demo_user', JSON.stringify(newProfile));
+        
+        // fetchProfile will be called by onAuthStateChange automatically if session starts
         return { error: null };
       }
-    } catch {
-      /* Supabase not configured — fallback to demo registration */
+      return { error: 'Unknown registration error.' };
+    } catch (err: any) {
+      return { error: err.message || 'Registration failed' };
     }
-
-    const newDemoUser: UserProfile = {
-      id: `customer-${Date.now()}`,
-      first_name: data.first_name,
-      last_name: data.last_name,
-      email: data.email,
-      phone: data.phone || null,
-      role: 'customer',
-      avatar_url: null,
-      created_at: new Date().toISOString(),
-    };
-    setUser(newDemoUser);
-    localStorage.setItem('shinewash_demo_user', JSON.stringify(newDemoUser));
-    return { error: null };
   };
 
   const logout = async () => {
-    localStorage.removeItem('shinewash_demo_user');
+    await supabase.auth.signOut();
     setUser(null);
-    await supabase.auth.signOut().catch(() => { /* ignore */ });
   };
 
   return (
