@@ -238,9 +238,9 @@ export const Welcome: React.FC = () => {
         }} />
 
         {/* Hero text — sits at the top */}
-        <div style={{
+        <div className="lx-hero-text" style={{
           position: 'absolute', top: 0, left: 0, right: 0,
-          padding: 'clamp(110px, 14vh, 180px) clamp(24px, 5vw, 80px) 0',
+          padding: 'clamp(88px, 12vh, 160px) clamp(24px, 5vw, 80px) 0',
         }}>
           <p style={{
             fontSize: 12, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase',
@@ -249,17 +249,17 @@ export const Welcome: React.FC = () => {
           }}>
             Premium Car Wash Services
           </p>
-          <h1 style={{
-            fontSize: 'clamp(36px, 7.5vw, 96px)', fontWeight: 800,
+          <h1 className="lx-hero-h1" style={{
+            fontSize: 'clamp(28px, 5.5vw, 96px)', fontWeight: 800,
             lineHeight: 1.0, letterSpacing: '-0.04em', color: '#fff',
-            maxWidth: 780, marginBottom: 32,
+            maxWidth: 780, marginBottom: 24,
             animation: 'lx-fadeUp 0.7s 0.1s ease both',
           }}>
             Your car deserves<br />a brilliant shine.
           </h1>
           <p style={{
-            fontSize: 'clamp(15px, 1.5vw, 18px)', color: 'rgba(255,255,255,0.55)',
-            maxWidth: 460, lineHeight: 1.7, marginBottom: 44,
+            fontSize: 'clamp(13px, 1.2vw, 18px)', color: 'rgba(255,255,255,0.55)',
+            maxWidth: 460, lineHeight: 1.7, marginBottom: 32,
             animation: 'lx-fadeUp 0.7s 0.2s ease both',
           }}>
             Experience the prestige of a professionally detailed car.<br />
@@ -431,6 +431,17 @@ export const Welcome: React.FC = () => {
           .desktop-nav-links { display: none !important; }
           .mobile-menu-btn { display: block !important; }
         }
+
+        /* 14-inch laptop (1024–1366px wide, 768px tall) */
+        @media (max-width: 1366px) and (max-height: 800px) {
+          .lx-hero-text { padding-top: 80px !important; }
+          .lx-hero-h1  { font-size: clamp(26px, 4.5vw, 60px) !important; margin-bottom: 16px !important; }
+        }
+        @media (max-width: 1100px) {
+          .lx-hero-text { padding-top: 90px !important; }
+          .lx-hero-h1  { font-size: clamp(26px, 4.8vw, 64px) !important; margin-bottom: 18px !important; }
+        }
+
         @media (max-width: 600px) {
           .lx-step-row { flex-direction: column; gap: 16px !important; padding: 32px 0 !important; }
           .lx-step-row > div:first-child { text-align: left !important; width: 100% !important; }
