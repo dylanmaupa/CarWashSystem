@@ -220,10 +220,11 @@ export const Welcome: React.FC = () => {
       {/* ══════════════ HERO ══════════════ */}
       <section style={{
         position: 'relative', minHeight: '100vh', overflow: 'hidden',
-        display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        paddingTop: 68, /* offset for fixed navbar */
         background: '#080808',
       }}>
-        {/* Hero car image — fills bottom half */}
+        {/* Hero car image */}
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: 'url(/hero-car.jpg)',
@@ -231,20 +232,20 @@ export const Welcome: React.FC = () => {
           backgroundRepeat: 'no-repeat',
         }} />
 
-        {/* Dark gradient overlay — heavier at top so text is readable */}
+        {/* Dark gradient overlay */}
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(to bottom, #080808 0%, rgba(8,8,8,0.82) 40%, rgba(8,8,8,0.25) 65%, rgba(8,8,8,0.85) 100%)',
         }} />
 
-        {/* Hero text — sits at the top */}
+        {/* Hero text — vertically centered */}
         <div className="lx-hero-text" style={{
-          position: 'absolute', top: 0, left: 0, right: 0,
-          padding: 'clamp(88px, 12vh, 160px) clamp(24px, 5vw, 80px) 0',
+          position: 'relative', zIndex: 1,
+          padding: '0 clamp(24px, 5vw, 80px)',
         }}>
           <p style={{
             fontSize: 12, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.4)', marginBottom: 24,
+            color: 'rgba(255,255,255,0.4)', marginBottom: 20,
             animation: 'lx-fadeUp 0.7s ease both',
           }}>
             Premium Car Wash Services
@@ -252,7 +253,7 @@ export const Welcome: React.FC = () => {
           <h1 className="lx-hero-h1" style={{
             fontSize: 'clamp(28px, 5.5vw, 96px)', fontWeight: 800,
             lineHeight: 1.0, letterSpacing: '-0.04em', color: '#fff',
-            maxWidth: 780, marginBottom: 24,
+            maxWidth: 780, marginBottom: 20,
             animation: 'lx-fadeUp 0.7s 0.1s ease both',
           }}>
             Your car deserves<br />a brilliant shine.
@@ -283,9 +284,6 @@ export const Welcome: React.FC = () => {
             </Link>
           </div>
         </div>
-
-        {/* Bottom fade into next section */}
-        <div style={{ height: 80, position: 'relative', zIndex: 2 }} />
       </section>
 
       {/* ══════════════ STATS ══════════════ */}
