@@ -53,6 +53,46 @@ interface AccordionCard { id: number; label: string; title: string; desc: string
 
 const AccordionCards: React.FC<{ cards: AccordionCard[] }> = ({ cards }) => {
   const [active, setActive] = useState<number>(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 700);
+
+  useEffect(() => {
+    const handle = () => setIsMobile(window.innerWidth < 700);
+    window.addEventListener('resize', handle);
+    return () => window.removeEventListener('resize', handle);
+  }, []);
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
+        {cards.map((card) => (
+          <div
+            key={card.id}
+            onClick={() => setActive(active === card.id ? -1 : card.id)}
+            style={{
+              borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)',
+              background: active === card.id ? 'linear-gradient(160deg, #1a1a1a 0%, #111 100%)' : 'rgba(255,255,255,0.03)',
+              padding: '24px 20px', cursor: 'pointer', overflow: 'hidden',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: active === card.id ? 16 : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                  {card.icon}
+                </div>
+                <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{card.label}</span>
+              </div>
+              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 20, lineHeight: 1 }}>{active === card.id ? '−' : '+'}</span>
+            </div>
+            {active === card.id && (
+              <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.75, margin: 0 }}>
+                {card.desc}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="accordion-feature-cards" style={{
@@ -82,39 +122,30 @@ const AccordionCards: React.FC<{ cards: AccordionCard[] }> = ({ cards }) => {
               justifyContent: 'space-between',
             }}
           >
-            {/* Subtle glow on active */}
             {isActive && (
               <div style={{
                 position: 'absolute', inset: 0, borderRadius: 20, pointerEvents: 'none',
                 background: 'radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.03) 0%, transparent 70%)',
               }} />
             )}
-
-            {/* Top: number + icon */}
             <div>
               <div style={{
                 fontSize: 11, fontWeight: 700, letterSpacing: '0.15em',
                 textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 32,
-                opacity: isActive ? 1 : 0.5,
-                transition: 'opacity 0.4s',
+                opacity: isActive ? 1 : 0.5, transition: 'opacity 0.4s',
               }}>
                 {card.num}
               </div>
-
-              {/* Vertical label (always visible) */}
               {!isActive && (
                 <div style={{
                   writingMode: 'vertical-lr', textOrientation: 'mixed',
                   transform: 'rotate(180deg)',
                   fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.5)',
-                  letterSpacing: '0.05em', marginTop: 8,
-                  whiteSpace: 'nowrap',
+                  letterSpacing: '0.05em', marginTop: 8, whiteSpace: 'nowrap',
                 }}>
                   {card.label}
                 </div>
               )}
-
-              {/* Expanded content */}
               {isActive && (
                 <div style={{ animation: 'lx-fadeIn 0.4s ease both' }}>
                   <div style={{
@@ -125,10 +156,7 @@ const AccordionCards: React.FC<{ cards: AccordionCard[] }> = ({ cards }) => {
                   }}>
                     {card.icon}
                   </div>
-                  <h3 style={{
-                    fontSize: 'clamp(18px,2vw,24px)', fontWeight: 700,
-                    letterSpacing: '-0.03em', color: '#fff', marginBottom: 14, lineHeight: 1.2,
-                  }}>
+                  <h3 style={{ fontSize: 'clamp(18px,2vw,24px)', fontWeight: 700, letterSpacing: '-0.03em', color: '#fff', marginBottom: 14, lineHeight: 1.2 }}>
                     {card.title}
                   </h3>
                   <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.75, maxWidth: 280 }}>
@@ -137,15 +165,12 @@ const AccordionCards: React.FC<{ cards: AccordionCard[] }> = ({ cards }) => {
                 </div>
               )}
             </div>
-
-            {/* Bottom accent line */}
             <div style={{
               height: 2, borderRadius: 2,
               background: isActive
                 ? 'linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.1))'
                 : 'rgba(255,255,255,0.08)',
-              transition: 'background 0.4s',
-              marginTop: 24,
+              transition: 'background 0.4s', marginTop: 24,
             }} />
           </div>
         );
@@ -225,7 +250,7 @@ export const Welcome: React.FC = () => {
             Premium Car Wash Services
           </p>
           <h1 style={{
-            fontSize: 'clamp(48px, 7.5vw, 96px)', fontWeight: 800,
+            fontSize: 'clamp(36px, 7.5vw, 96px)', fontWeight: 800,
             lineHeight: 1.0, letterSpacing: '-0.04em', color: '#fff',
             maxWidth: 780, marginBottom: 32,
             animation: 'lx-fadeUp 0.7s 0.1s ease both',
@@ -240,7 +265,7 @@ export const Welcome: React.FC = () => {
             Experience the prestige of a professionally detailed car.<br />
             Book in seconds. Pay on-site. No hidden fees.
           </p>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', animation: 'lx-fadeUp 0.7s 0.3s ease both' }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', animation: 'lx-fadeUp 0.7s 0.3s ease both' }}>
             <Link to="/register" className="lx-btn-primary" style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               padding: '14px 28px', fontSize: 15, fontWeight: 600,
@@ -395,6 +420,16 @@ export const Welcome: React.FC = () => {
         .lx-btn-lg:hover {
           transform: translateY(-3px) !important;
           box-shadow: 0 20px 60px rgba(255,255,255,0.15) !important;
+        }
+
+        /* Desktop nav: hide hamburger */
+        .desktop-nav-links { display: flex !important; }
+        .mobile-menu-btn { display: none !important; }
+
+        /* Responsive breakpoints */
+        @media (max-width: 768px) {
+          .desktop-nav-links { display: none !important; }
+          .mobile-menu-btn { display: block !important; }
         }
         @media (max-width: 600px) {
           .lx-step-row { flex-direction: column; gap: 16px !important; padding: 32px 0 !important; }
