@@ -82,7 +82,6 @@ export const BookService: React.FC = () => {
       manager_notes: null,
       decline_reason: null,
       location: 'ShineWash Main Branch',
-      service: selectedService,
     });
     navigate('/booking-confirmation', { state: { booking, service: selectedService } });
   };
