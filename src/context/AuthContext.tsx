@@ -83,32 +83,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
+        options: {
+          // Pass profile data as metadata — the DB trigger will use this to create the profile row
+          data: {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            phone: data.phone || null,
+          },
+        },
       });
-      
+
       if (error) return { error: error.message };
-      
+
       if (authData.user) {
-        const newProfile = {
-          id: authData.user.id,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          email: data.email,
-          phone: data.phone || null,
-          role: 'customer',
-          avatar_url: null,
-        };
-        
-        const { error: profileError } = await supabase.from('profiles').insert([newProfile]);
-        
-        if (profileError) {
-          console.error("Profile creation error:", profileError);
-          return { error: 'Account created but failed to save profile details.' };
+        // If email confirmation is disabled, session starts immediately
+        // If email confirmation is enabled, user must confirm before logging in
+        if (authData.session) {
+          // Session available — trigger has run, fetch the profile
+          await fetchProfile(authData.user.id);
         }
-        
-        // fetchProfile will be called by onAuthStateChange automatically if session starts
+        // Either way, registration succeeded
         return { error: null };
       }
-      return { error: 'Unknown registration error.' };
+
+      return { error: 'Registration failed. Please try again.' };
     } catch (err: any) {
       return { error: err.message || 'Registration failed' };
     }
